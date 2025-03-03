@@ -45,11 +45,12 @@
 
 from p_kit.core.p_circuit import PCircuit
 from .base_solver import Solver
-from random import random
+import numba.cuda.random as random
 import numpy as np
 import matplotlib.pyplot as plt
 from p_kit.visualization import histplot
 from numba import cuda, float32
+import math
 
 
 class CaSuDaSolver(Solver):
@@ -76,7 +77,9 @@ class CaSuDaSolver(Solver):
         for run in range(self.Nt):
             self.compute_inputs[blockspergrid, threadsperblock](d_J, d_h, d_m, d_I, self.i0, n_pbits)
             self.apply_s_function[blockspergrid, threadsperblock](d_I, d_m, d_s, self.dt, n_pbits)
-            self.update_outputs[blockspergrid, threadsperblock](d_m, d_s, n_pbits)
+
+            rng_states = random.create_xoroshiro128p_states(threadsperblock * blockspergrid, seed=1)
+            self.update_outputs[blockspergrid, threadsperblock](d_m, d_s, n_pbits, rng_states)
 
             cuda.synchronize()
 
@@ -85,6 +88,7 @@ class CaSuDaSolver(Solver):
 
         return all_I, all_m
 
+    @staticmethod
     @cuda.jit
     def compute_inputs(J, h, m, I, i0, n):
         idx = cuda.grid(1)
@@ -94,15 +98,17 @@ class CaSuDaSolver(Solver):
                 sum_Jm += J[idx, j] * m[j]
             I[idx] = i0 * (sum_Jm + h[idx])
 
+    @staticmethod
     @cuda.jit
     def apply_s_function(I, m, s, dt, n):
         idx = cuda.grid(1)
         if idx < n:
-            s[idx] = np.exp(-dt * np.exp(-m[idx] * I[idx]))
+            s[idx] = math.exp(-dt * math.exp(-m[idx] * I[idx]))
 
+    @staticmethod
     @cuda.jit
-    def update_outputs(m, s, n):
+    def update_outputs(m, s, n, rng_states):
         idx = cuda.grid(1)
         if idx < n:
-            if s[idx] > random():
+            if s[idx] > random.xoroshiro128p_uniform_float32(rng_states, idx):
                 m[idx] = -m[idx]
