@@ -1,4 +1,3 @@
-LICENSE
 README.md
 setup.py
 p_kit/__init__.py
@@ -16,5 +15,7 @@ p_kit/solver/base_solver.py
 p_kit/solver/csd_solver.py
 p_kit/visualization/__init__.py
 p_kit/visualization/histplot.py
+p_kit/visualization/plot3d.py
 p_kit/visualization/utils.py
+p_kit/visualization/vin_vout.py
 tests/test_core.py

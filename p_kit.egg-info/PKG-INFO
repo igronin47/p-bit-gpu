@@ -12,7 +12,6 @@ Project-URL: Tracker, https://github.com/IBM/p-kitissues/
 Platform: any
 Requires-Python: >=3.9
 Description-Content-Type: text/markdown
-License-File: LICENSE
 Requires-Dist: numpy<1.27
 Requires-Dist: cython==3.0.8
 Requires-Dist: cvxpy==1.4.2
