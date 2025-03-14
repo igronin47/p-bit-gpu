@@ -1,4 +1,4 @@
-Metadata-Version: 2.1
+Metadata-Version: 2.2
 Name: p-kit
 Version: 0.0.1
 Summary: Probabilistic circuit simulator
@@ -23,6 +23,18 @@ Provides-Extra: tests
 Requires-Dist: pytest; extra == "tests"
 Requires-Dist: seaborn; extra == "tests"
 Requires-Dist: flake8; extra == "tests"
+Dynamic: author
+Dynamic: author-email
+Dynamic: description
+Dynamic: description-content-type
+Dynamic: home-page
+Dynamic: license
+Dynamic: platform
+Dynamic: project-url
+Dynamic: provides-extra
+Dynamic: requires-dist
+Dynamic: requires-python
+Dynamic: summary
 
 # p-kit
 Python library for the simulation of probabilistic circuits.
